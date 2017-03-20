@@ -14,12 +14,12 @@ $ ->
     # Hides or shows the locale tab and its corresponding element in the add menu.
     toggleTab = ($tab, active) ->
       $addButton = $tab.parents('ul').find('.add-locale li:has(a[href="' + $tab.attr('href') + '"])')
-      if active
-        $tab.addClass('hidden').show().removeClass('hidden')
-        $addButton.hide().addClass('hidden')
-      else
-        $tab.addClass('hidden').hide().addClass('hidden')
-        $addButton.show().removeClass('hidden')
+      # if active
+      #   $tab.addClass('hidden').show().removeClass('hidden')
+      #   $addButton.hide().addClass('hidden')
+      # else
+      #   $tab.addClass('hidden').hide().addClass('hidden')
+      #   $addButton.show().removeClass('hidden')
 
     $(".activeadmin-translations > ul").each ->
       $dom = $(this)
@@ -113,23 +113,32 @@ $ ->
               # Get the corresponding fieldsets.
               $fieldsets = $(this).siblings('fieldset')
               $("li:not(.add-locale) > a", this).each ->
-                # Remove them if the locale is hidden.
-                if $(this).hasClass('hidden')
-                  # check if it's an existing translation otherwise remove it
-                  $currentFieldset = $("fieldset#{$(this).attr('href')}")
-                  $translationId = $('input[id$=_id]', $currentFieldset)
-                  if $translationId.val()
-                    # mark it for database removal appending a _destroy element
-                    $destroy = $('<input/>').attr(
-                      type: 'hidden',
-                      name: $translationId.attr('name').replace('[id]', '[_destroy]'),
-                      id: $translationId.attr('id').replace('_id', '_destroy'),
-                      value: '1'
-                    )
-                    $destroy.appendTo($currentFieldset)
-                  else
-                    # remove the fieldset from dom so it won't be submitted
-                    $fieldsets.filter($(this).attr('href')).remove()
+                $currentFieldset = $("fieldset#{$(this).attr('href')}")
+                $translationId = $('input[id$=_id]', $currentFieldset)
+                $translationValue = $('input[id$=_name]', $currentFieldset)
+
+                if $translationValue.val() == ''
+                  $destroy = $('<input/>').attr(
+                    type: 'hidden',
+                    name: $translationId.attr('name').replace('[id]', '[_destroy]'),
+                    id: $translationId.attr('id').replace('_id', '_destroy'),
+                    value: '1'
+                  )
+                  $destroy.appendTo($currentFieldset)
+
+                # if $translationId.val() 
+                #   if translationValue.val() != ''
+                #     $destroy = $('<input/>').attr(
+                #       type: 'hidden',
+                #       name: $translationId.attr('name').replace('[id]', '[_destroy]'),
+                #       id: $translationId.attr('id').replace('_id', '_destroy'),
+                #       value: '1'
+                #     )
+                #     $destroy.appendTo($currentFieldset)
+                # else
+                #   # remove the fieldset from dom so it won't be submitted
+                #   $fieldsets.filter($(this).attr('href')).remove()
+
 
         #Initially update the buttons' status
         updateLocaleButtonsStatus($dom)
